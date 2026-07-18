@@ -1,0 +1,126 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  name               String?
+  photoUrl           String?    @map("photo_url")
+  preferredBudget    Float?     @map("preferred_budget")
+  preferredAmenities String[]   @map("preferred_amenities") // Array of preferred amenity names
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+  bookings           Booking[]
+  favorites          Favorite[]
+  reviews            Review[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id                 String             @id @default(uuid())
+  name               String
+  description        String
+  address            String
+  latitude           Float
+  longitude          Float
+  pricePerDay        Float              @map("price_per_day")
+  pricePerMonth      Float              @map("price_per_month")
+  wifiSpeed          Float              @map("wifi_speed")
+  parking            Boolean            @default(false)
+  cafeteria          Boolean            @default(false)
+  meetingRooms       Boolean            @default(false) @map("meeting_rooms")
+  chargingPorts      Boolean            @default(false) @map("charging_ports")
+  noiseLevel         String             @map("noise_level") // "Low", "Medium", "High"
+  washroomRating     Float              @map("washroom_rating")
+  trafficScore       Float              @map("traffic_score") // 0 to 100
+  metroDistance      Float              @map("metro_distance") // in km
+  availableSeats     Int                @map("available_seats")
+  rating             Float              @default(0.0)
+  images             String[]
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  bookings           Booking[]
+  favorites          Favorite[]
+  reviews            Review[]
+  workspaceAmenities WorkspaceAmenity[]
+
+  @@map("workspaces")
+}
+
+model Amenity {
+  id                 String             @id @default(uuid())
+  name               String             @unique
+  icon               String             // Lucide icon name
+  workspaceAmenities WorkspaceAmenity[]
+
+  @@map("amenities")
+}
+
+model WorkspaceAmenity {
+  workspaceId String    @map("workspace_id")
+  amenityId   String    @map("amenity_id")
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  amenity     Amenity   @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@id([workspaceId, amenityId])
+  @@map("workspace_amenities")
+}
+
+model Review {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  workspaceId String    @map("workspace_id")
+  rating      Float
+  comment     String
+  pros        String[]  // Array of pros
+  cons        String[]  // Array of cons
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model Booking {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  workspaceId String    @map("workspace_id")
+  date        DateTime
+  time        String    // e.g., "10:00 AM"
+  teamSize    Int       @map("team_size")
+  purpose     String    // e.g., "Meeting", "Co-working", "Event"
+  status      String    @default("Pending") // "Pending", "Confirmed", "Cancelled"
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+model Favorite {
+  userId      String    @map("user_id")
+  workspaceId String    @map("workspace_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@id([userId, workspaceId])
+  @@map("favorites")
+}
+
+model Location {
+  id        String   @id @default(uuid())
+  city      String
+  area      String
+  latitude  Float
+  longitude Float
+
+  @@map("locations")
+}
