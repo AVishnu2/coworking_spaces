@@ -25,7 +25,7 @@ Instead of generic ratings, CoWorkIQ uses a weighted **AI Recommendation Score**
 9. **Interactive Map Widget**: Styled interactive visual map showing coordinate pins and tooltips.
 10. **Admin Panel**: CRUD workspaces, approve/reject visit bookings, and moderate reviews.
 
----
+--- 
 
 ## 🛠️ Technology Stack
 
