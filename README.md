@@ -4,7 +4,7 @@ CoWorkIQ is a modern, production-ready SaaS dashboard designed to help startups,
 
 Instead of generic ratings, CoWorkIQ uses a weighted **AI Recommendation Score** to match spaces to user preferences, alongside interactive chatbot assistants, review summarizers, comparisons, and live scheduler bookings.
 
-## 🚀 Key Features
+## 🚀 Key Features   
 
 1. **Authentication**: Credentials signup/login, forgot password, and Google Auth simulation.
 2. **Dashboard**: Greeting, quick search, recent views, nearby spaces, and visual pins.
